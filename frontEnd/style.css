@@ -5,7 +5,7 @@
 
 body {
   box-sizing: border-box;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 
 li {
@@ -14,12 +14,90 @@ li {
 a {
   text-decoration: none;
 }
+#cart {
+  /* color: white; */
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 20px;
+  right: 0;
+  background-color: white;
+  box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.3);
+  border: 1px solid black;
+  border-radius: 10px;
+  height: 90vh;
+  padding: 3rem;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+}
+#cart.active {
+  transform: translateX(0);
+}
+.cart-container {
+  text-align: center;
+}
+
+.cart-container h2 {
+  text-align: end;
+  justify-content: space-between;
+}
+.cart-headings {
+  display: flex;
+  justify-content: space-between;
+}
+.cart-container h3 {
+  border-bottom: 1px solid black;
+  margin-right: 15px;
+
+  text-align: center;
+}
+.item {
+  width: 150px;
+}
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid black;
+}
+.cart-item-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-item .cart-image {
+  height: 100px;
+  width: 100px;
+  object-fit: cover;
+}
+.cart-item p {
+  align-items: center;
+}
+.cart-qty {
+  display: flex;
+  align-items: center;
+}
+.cart-qty span {
+  border: 1px solid black;
+  padding: 5px 10px;
+}
+.cart-qty button {
+  position: relative;
+  left: 15px;
+}
 .navigation {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
+  z-index: 0;
   /* padding-bottom: 18px; */
+}
+.navigation button {
+  z-index: 1;
 }
 
 .navbar {
@@ -30,12 +108,12 @@ a {
   padding: 5px;
   color: white;
   font-size: 15px;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
 }
 .navbar a {
   color: white;
+  /* color: black; */
 }
-
 .nav-items {
   display: flex;
   align-items: center;
@@ -46,7 +124,7 @@ a {
   padding: 0 30px;
 }
 #menu {
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Open Sans', sans-serif;
   position: fixed;
   border: none;
   top: 13px;
@@ -55,8 +133,11 @@ a {
   border-radius: 5px;
   border: none;
 }
+#menu.active {
+  transform: translateX(0);
+}
 .navigation h1 {
-  font-family: "Roboto Mono", monospace;
+  font-family: 'Roboto Mono', monospace;
   display: flex;
   justify-content: center;
   /* margin: 65px 0; */
@@ -74,7 +155,7 @@ a {
   padding-top: 30px;
 }
 .container h1 {
-  font-family: "Roboto Mono", monospace;
+  font-family: 'Roboto Mono', monospace;
   display: flex;
   width: 100%;
   font-size: 40px;
@@ -100,7 +181,7 @@ a {
   object-fit: cover;
 }
 h3 {
-  font-family: "Roboto Mono", monospace;
+  font-family: 'Roboto Mono', monospace;
   padding: 20px;
   padding-bottom: 0px;
   padding-top: 25px;
@@ -157,7 +238,7 @@ button {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  font-family: "Roboto Mono", monospace;
+  font-family: 'Roboto Mono', monospace;
   margin: 30px;
   padding: 40px;
 }
@@ -172,4 +253,7 @@ button {
 }
 .new-food-item span {
   padding: 10px 10px;
+}
+button.red {
+  background-color: red;
 }

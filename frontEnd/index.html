@@ -11,9 +11,52 @@
     <title>Foodbey</title>
   </head>
   <body>
+    <section id="cart">
+      <div class="cart-container">
+        <h1>Cart</h1>
+        <div class="cart-headings">
+          <h3 class="item">Item</h3>
+          <h3>Price</h3>
+          <h3>Quantity</h3>
+        </div>
+        <h2>Total $0 </h2>
+        <div class="cart-item">
+          <div class="cart-item-details">
+            <img
+              class="cart-image"
+              src="https://t4.ftcdn.net/jpg/02/10/80/37/240_F_210803786_qXjc6ycwK4hTNV3glV0vNlhHJMpXxdFe.jpg"
+              alt="food1"
+            />
+            <p>food1</p>
+          </div>
+            <p>$19</p>
+            <div class="cart-qty">
+              <span>1</span>
+              <button class="delete-cart red">remove</button>
+            </div>
+          </div>
+          <div class="cart-item">
+            <div class="cart-item-details">
+              <img
+                class="cart-image"
+                src="https://t4.ftcdn.net/jpg/02/10/80/37/240_F_210803786_qXjc6ycwK4hTNV3glV0vNlhHJMpXxdFe.jpg"
+                alt="food1"
+              />
+              <p>food1</p>
+            </div>
+            <p>$19</p>
+            <div class="cart-qty">
+              <span>1</span>
+              <button class="delete-cart red">remove</button>
+            </div>
+          </div>
+        </div>
+    </section>
+    
     <div class="navigation">
+      <button id="menu">cart</button>
       <nav class="navbar">
-        <button id="menu">cart</button>
+        <!-- <button id="menu">cart</button> -->
         <ul class="nav-items">
           <li class="nav-item"><a href="/index.html">Home</a></li>
           <li class="nav-item"><a href="/store.html">Store</a></li>
@@ -121,4 +164,5 @@
         </div>
     </section>
   </body>
+  <script src="script.js"></script>
 </html>
