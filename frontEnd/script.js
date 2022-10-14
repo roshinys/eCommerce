@@ -110,7 +110,6 @@ var msgToDisplay = (msg) => {
   }, 3000);
 };
 var purchaseFood = () => {
-  // console.log(totalCartPrice);
   if (totalCartPrice == 0) {
     msgToDisplay("no items found in cart add Cart Please!");
     return;
