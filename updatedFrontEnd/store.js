@@ -1,29 +1,74 @@
-const removeCartItem = document.getElementsByClassName("btn-danger");
-const cartInputChange = document.getElementsByClassName("cart-quantity-input");
-const shopItems = document.getElementsByClassName("shop-item-button");
-const purchaseBtn = document.getElementsByClassName("btn-purchase")[0];
-
-purchaseBtn.addEventListener("click", purchaseCart);
-function purchaseCart(e) {
-  sendMessage("Thank You For Purchasing the product");
-  var cartItems = document.getElementsByClassName("cart-items")[0];
-  while (cartItems.hasChildNodes()) {
-    cartItems.removeChild(cartItems.firstChild);
+var removeCartItem = document.getElementsByClassName("btn-danger");
+var cartInputChange = document.getElementsByClassName("cart-quantity-input");
+var shopItems = document.getElementsByClassName("shop-item-button");
+var purchaseBtn = document.getElementsByClassName("btn-purchase")[0];
+//get all Products
+var getAllProducts = async () => {
+  const result = await axios.get("http://localhost:3000/admin/products");
+  if (result.data.msg !== true) {
+    console.log("smtg went wrong");
+    return;
   }
-  updateTotal();
-}
+  var products = result.data.products;
+  products.forEach((product) => {
+    console.log(product);
+    var shopItems = document.getElementsByClassName("shop-items")[0];
+    var newShopItem = `<div class="shop-item" id="${product.id}">
+          <span class="shop-item-title">${product.name}</span>
+          <img class="shop-item-image" src="${product.imageSrc}" />
+          <div class="shop-item-details">
+            <span class="shop-item-price">$${product.price}</span>
+            <button class="btn btn-primary shop-item-button" type="button">
+              ADD TO CART
+            </button>
+          </div>
+        </div>`;
+    shopItems.innerHTML = shopItems.innerHTML + newShopItem;
+  });
+  for (let i = 0; i < shopItems.length; i++) {
+    var items = shopItems[i];
+    // console.log(items);
+    items.addEventListener("click", addToCart);
+  }
+};
 
-for (let i = 0; i < removeCartItem.length; i++) {
-  var btn = removeCartItem[i];
-  btn.addEventListener("click", removeCart);
-}
-for (let i = 0; i < cartInputChange.length; i++) {
-  var ip = cartInputChange[i];
-  ip.addEventListener("change", qtyUpdate);
-}
-for (let i = 0; i < shopItems.length; i++) {
-  var items = shopItems[i];
-  items.addEventListener("click", addToCart);
+window.addEventListener("DOMContentLoaded", async () => {
+  getAllProducts();
+  purchaseBtn.addEventListener("click", purchaseCart);
+  function purchaseCart(e) {
+    sendMessage("Thank You For Purchasing the product");
+    var cartItems = document.getElementsByClassName("cart-items")[0];
+    while (cartItems.hasChildNodes()) {
+      cartItems.removeChild(cartItems.firstChild);
+    }
+    updateTotal();
+  }
+
+  for (let i = 0; i < removeCartItem.length; i++) {
+    var btn = removeCartItem[i];
+    btn.addEventListener("click", removeCart);
+  }
+  for (let i = 0; i < cartInputChange.length; i++) {
+    var ip = cartInputChange[i];
+    ip.addEventListener("change", qtyUpdate);
+  }
+});
+
+function addToCart(e) {
+  var newCart = e.target;
+  console.log(newCart);
+  var price = newCart.parentNode.children[0].innerText;
+  var title = newCart.parentNode.parentNode.children[0].innerText;
+  var imageSrc = newCart.parentNode.parentNode.children[1].src;
+  var cartRows = document.getElementsByClassName("cart-row");
+  for (let i = 1; i < cartRows.length; i++) {
+    if (cartRows[i].children[0].children[1].innerText === title) {
+      sendMessage("item already Present");
+      return;
+    }
+  }
+  sendMessage("Added cart successfully");
+  newCartadded(title, price, imageSrc);
 }
 
 function sendMessage(msg) {
@@ -38,23 +83,7 @@ function sendMessage(msg) {
   notify[0].appendChild(newdiv);
   setTimeout(() => {
     notify[0].removeChild(newdiv);
-  }, 3000);
-}
-
-function addToCart(e) {
-  var newCart = e.target;
-  var price = newCart.parentNode.children[0].innerText;
-  var title = newCart.parentNode.parentNode.children[0].innerText;
-  var imageSrc = newCart.parentNode.parentNode.children[1].src;
-  var cartRows = document.getElementsByClassName("cart-row");
-  for (let i = 1; i < cartRows.length; i++) {
-    if (cartRows[i].children[0].children[1].innerText === title) {
-      sendMessage("item already Present");
-      return;
-    }
-  }
-  sendMessage("Added cart successfully");
-  newCartadded(title, price, imageSrc);
+  }, 1000);
 }
 
 function newCartadded(title, price, imageSrc) {
@@ -123,7 +152,7 @@ function updateTotal() {
 const closebtn = document.getElementsByClassName("close-cart")[0];
 const cartMenu = document.getElementsByClassName("cart-container")[0];
 const mainbtn = document.getElementsByClassName("main-cart")[0];
-console.log(closebtn, cartMenu, mainbtn);
+// console.log(closebtn, cartMenu, mainbtn);
 
 mainbtn.addEventListener("click", () => {
   cartMenu.classList.toggle("active");

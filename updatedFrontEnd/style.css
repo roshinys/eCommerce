@@ -220,6 +220,7 @@ body {
 
 .shop-item-image {
   height: 250px;
+  width: 250px;
 }
 
 .shop-item-details {
@@ -242,8 +243,8 @@ body {
 .cart-header {
   font-weight: bold;
   font-size: 1.25em;
-  /* color: #333; */
-  color: white;
+  color: #333;
+  /* color: white; */
 }
 
 .cart-column {
@@ -266,8 +267,8 @@ body {
 .cart-price {
   width: 20%;
   font-size: 1.2em;
-  /* color: #333; */
-  color: white;
+  color: #333;
+  /* color: white; */
 }
 
 .cart-quantity {
@@ -275,8 +276,8 @@ body {
 }
 
 .cart-item-title {
-  /* color: #333; */
-  color: white;
+  color: #333;
+  /* color: white; */
   margin-left: 0.5em;
   font-size: 1.2em;
 }
@@ -305,7 +306,7 @@ body {
   border-radius: 5px;
   border: 1px solid #56ccf2;
   background-color: #eee;
-  /* color: #333; */
+  color: #333;
   /* color: white; */
   color: black;
   padding: 0;
@@ -331,14 +332,14 @@ body {
 .cart-total-title {
   font-weight: bold;
   font-size: 1.5em;
-  /* color: black; */
-  color: white;
+  color: black;
+  /* color: white; */
   margin-right: 20px;
 }
 
 .cart-total-price {
-  /* color: #333; */
-  color: white;
+  color: #333;
+  /* color: white; */
   font-size: 1.1em;
 }
 
@@ -354,7 +355,7 @@ body {
   padding: 5px;
 }
 .notification-content {
-  background-color: #2d9cdb;
+  background-color: #56ccf2;
   margin: 2px;
   padding: 3px;
   border-radius: 10px;
@@ -369,7 +370,7 @@ body {
   background-color: white;
   color: black;
   border-radius: 5px;
-  border: 2px solid #47b5ff;
+  border: 2px solid #2d9cdb;
   padding: 5px;
   width: 50px;
   height: 35px;
