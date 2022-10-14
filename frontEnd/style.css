@@ -5,7 +5,7 @@
 
 body {
   box-sizing: border-box;
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 
 li {
@@ -108,7 +108,7 @@ a {
   padding: 5px;
   color: white;
   font-size: 15px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
 }
 .navbar a {
   color: white;
@@ -124,7 +124,7 @@ a {
   padding: 0 30px;
 }
 #menu {
-  font-family: 'Open Sans', sans-serif;
+  font-family: "Open Sans", sans-serif;
   position: fixed;
   border: none;
   top: 13px;
@@ -137,7 +137,7 @@ a {
   transform: translateX(0);
 }
 .navigation h1 {
-  font-family: 'Roboto Mono', monospace;
+  font-family: "Roboto Mono", monospace;
   display: flex;
   justify-content: center;
   /* margin: 65px 0; */
@@ -155,7 +155,7 @@ a {
   padding-top: 30px;
 }
 .container h1 {
-  font-family: 'Roboto Mono', monospace;
+  font-family: "Roboto Mono", monospace;
   display: flex;
   width: 100%;
   font-size: 40px;
@@ -181,7 +181,7 @@ a {
   object-fit: cover;
 }
 h3 {
-  font-family: 'Roboto Mono', monospace;
+  font-family: "Roboto Mono", monospace;
   padding: 20px;
   padding-bottom: 0px;
   padding-top: 25px;
@@ -238,7 +238,7 @@ button {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  font-family: 'Roboto Mono', monospace;
+  font-family: "Roboto Mono", monospace;
   margin: 30px;
   padding: 40px;
 }
@@ -256,4 +256,16 @@ button {
 }
 button.red {
   background-color: red;
+}
+.notify-container {
+  position: fixed;
+  right: 0px;
+  bottom: 5px;
+}
+.notifi {
+  background-color: #5cb8e4;
+  color: white;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 10px;
 }
