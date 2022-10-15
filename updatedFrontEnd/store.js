@@ -11,14 +11,14 @@ var getAllProducts = async () => {
   }
   var products = result.data.products;
   products.forEach((product) => {
-    console.log(product);
+    // console.log(product);
     var shopItems = document.getElementsByClassName("shop-items")[0];
     var newShopItem = `<div class="shop-item" id="${product.id}">
           <span class="shop-item-title">${product.name}</span>
           <img class="shop-item-image" src="${product.imageSrc}" />
           <div class="shop-item-details">
             <span class="shop-item-price">$${product.price}</span>
-            <button class="btn btn-primary shop-item-button" type="button">
+            <button class="btn btn-primary shop-item-button" value=${product.id} type="button">
               ADD TO CART
             </button>
           </div>
@@ -34,15 +34,8 @@ var getAllProducts = async () => {
 
 window.addEventListener("DOMContentLoaded", async () => {
   getAllProducts();
+  getCart();
   purchaseBtn.addEventListener("click", purchaseCart);
-  function purchaseCart(e) {
-    sendMessage("Thank You For Purchasing the product");
-    var cartItems = document.getElementsByClassName("cart-items")[0];
-    while (cartItems.hasChildNodes()) {
-      cartItems.removeChild(cartItems.firstChild);
-    }
-    updateTotal();
-  }
 
   for (let i = 0; i < removeCartItem.length; i++) {
     var btn = removeCartItem[i];
@@ -53,22 +46,38 @@ window.addEventListener("DOMContentLoaded", async () => {
     ip.addEventListener("change", qtyUpdate);
   }
 });
-
-function addToCart(e) {
-  var newCart = e.target;
-  console.log(newCart);
-  var price = newCart.parentNode.children[0].innerText;
-  var title = newCart.parentNode.parentNode.children[0].innerText;
-  var imageSrc = newCart.parentNode.parentNode.children[1].src;
-  var cartRows = document.getElementsByClassName("cart-row");
-  for (let i = 1; i < cartRows.length; i++) {
-    if (cartRows[i].children[0].children[1].innerText === title) {
-      sendMessage("item already Present");
-      return;
-    }
+async function purchaseCart(e) {
+  const result = await axios.delete(
+    "http://localhost:3000/admin/products/remove-cart"
+  );
+  // console.log(result);
+  if (result.data == 0) {
+    sendMessage("No cart Present! Add to cart please");
+    return;
   }
-  sendMessage("Added cart successfully");
-  newCartadded(title, price, imageSrc);
+  sendMessage("Thank You For Purchasing the product");
+  var cartItems = document.getElementsByClassName("cart-items")[0];
+  while (cartItems.hasChildNodes()) {
+    cartItems.removeChild(cartItems.firstChild);
+  }
+  updateTotal();
+}
+
+async function getCart() {
+  const result = await axios.get("http://localhost:3000/admin/products/cart");
+  const products = result.data;
+  // var title, price, imageSrc, quantity;
+  products.forEach((product) => {
+    newCartadded(
+      product.id,
+      product.name,
+      product.price,
+      product.imageSrc,
+      product.cartItem.quantity
+    );
+  });
+  //newCartadded(title, price, imageSrc, quantity)
+  // console.log(products, products.length);
 }
 
 function sendMessage(msg) {
@@ -76,7 +85,7 @@ function sendMessage(msg) {
   //   <h1>Message Added Successfully</h1>
   // </div>;
   var notify = document.getElementsByClassName("notify");
-  console.log(notify[0]);
+  // console.log(notify[0]);
   var newdiv = document.createElement("div");
   newdiv.className = "notification-content";
   newdiv.innerHTML = `<div class="notification-content"><h1>${msg}<h1/></div>`;
@@ -86,7 +95,51 @@ function sendMessage(msg) {
   }, 1000);
 }
 
-function newCartadded(title, price, imageSrc) {
+async function addToCart(e) {
+  var productId = e.target.value;
+  // console.log(productId);
+  var cartRows = document.getElementsByClassName("cart-row");
+  // console.log("heres button id", cartRows);
+  // console.log(cartRows[1].children[2].children[1].id);
+  if (cartRows.length > 0) {
+    for (let i = 1; i < cartRows.length; i++) {
+      if (cartRows[i].children[2].children[1].id === productId) {
+        sendMessage("cart Already Present");
+        return;
+      }
+    }
+  }
+  var newCart = e.target;
+  const result = await axios.post(
+    `http://localhost:3000/admin/products/add-cart/${productId}`
+  );
+  if (result.data.msg) {
+    console.log("smtg went wrong");
+    return;
+  }
+  // console.log(result.data);
+  const cartItems = result.data;
+  const product = cartItems.product;
+  // console.log(cartItems);
+  var price = product.price;
+  var title = product.name;
+  var imageSrc = product.imageSrc;
+  var quantity = 1;
+  // var price = newCart.parentNode.children[0].innerText;
+  // var title = newCart.parentNode.parentNode.children[0].innerText;
+  // var imageSrc = newCart.parentNode.parentNode.children[1].src;
+  // var cartRows = document.getElementsByClassName("cart-row");
+  // for (let i = 1; i < cartRows.length; i++) {
+  //   if (cartRows[i].children[0].children[1].innerText === title) {
+  //     sendMessage("item already Present");
+  //     return;
+  //   }
+  // }
+  sendMessage("Added cart successfully");
+  newCartadded(product.id, title, price, imageSrc, quantity);
+}
+
+function newCartadded(prodId, title, price, imageSrc, quantity) {
   const newCartdiv = document.createElement("div");
   newCartdiv.className = "cart-row";
   var cartItems = document.getElementsByClassName("cart-items")[0];
@@ -102,8 +155,8 @@ function newCartadded(title, price, imageSrc) {
           </div>
           <span class="cart-price cart-column">${price}</span>
           <div class="cart-quantity cart-column">
-            <input class="cart-quantity-input" type="number" value="1" />
-            <button class="btn btn-danger" type="button">REMOVE</button>
+            <input class="cart-quantity-input" type="number" id=${prodId} value="${quantity}" />
+            <button class="btn btn-danger" id=${prodId} type="button">REMOVE</button>
           </div>
           `;
   newCartdiv.innerHTML = newCartChild;
@@ -116,23 +169,37 @@ function newCartadded(title, price, imageSrc) {
   newqty.addEventListener("change", qtyUpdate);
 }
 
-function qtyUpdate(e) {
+async function qtyUpdate(e) {
   if (isNaN(e.target.value) || e.target.value <= 0) {
     e.target.value = 1;
     alert("quantity cant be negative");
-    return;
   }
-  //   var qtyValue = e.target.value;
+  var qtyValue = e.target.value;
+  var prodId = e.target.id;
+  await axios.put(
+    `http://localhost:3000/admin/products/cartUpdate/${prodId}?quantity=${qtyValue}`
+  );
   updateTotal();
 }
 
-function removeCart(e) {
+async function removeCart(e) {
+  const prodId = e.target.id;
+  const res = await axios.delete(
+    `http://localhost:3000/admin/products/remove-cart/${prodId}`
+  );
+  // console.log(res);
   var buttonClicked = e.target;
   var removeItem = buttonClicked.parentNode.parentNode;
   var items = removeItem.parentNode;
   items.removeChild(removeItem);
   sendMessage("removed item successfully from cart");
   updateTotal();
+  var shopItems = document.getElementsByClassName("shop-items")[0];
+  for (let i = 0; i < shopItems.length; i++) {
+    var items = shopItems[i];
+    // console.log(items);
+    items.addEventListener("click", addToCart);
+  }
 }
 
 function updateTotal() {
