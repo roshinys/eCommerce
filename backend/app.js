@@ -94,16 +94,8 @@ sequalize
       console.log(err);
     }
   })
-  .then(async (user) => {
+  .then((cart) => {
     // console.log(cart);
-    let order = await user.getOrder();
-    if (order) {
-      return order;
-    }
-    return await user.createOrder();
-  })
-  .then((order) => {
-    // console.log(order);
     app.listen(process.env.PORT);
   })
   .catch((err) => {

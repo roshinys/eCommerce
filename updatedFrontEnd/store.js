@@ -85,8 +85,12 @@ window.addEventListener("DOMContentLoaded", async () => {
 async function purchaseCart(e) {
   const result = await axios.post("http://localhost:3000/admin/add-order");
   // console.log(result);
-  if (result.data == 0 || !result.data.msg) {
+  if (!result.data.newOrder) {
     sendMessage("No cart Present! Add to cart please");
+    return;
+  }
+  if (!result.data.msg) {
+    sendMessage("smtg went Wrong Try again Please");
     return;
   }
   sendMessage("Thank You For Purchasing the product");

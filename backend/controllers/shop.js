@@ -129,17 +129,19 @@ exports.removeCart = async (req, res) => {
   try {
     let cart = await req.user.getCart();
     let products = await cart.getProducts();
-    let orders = await req.user.getOrder();
-    products.forEach(async (product) => {
-      const newOrder = await orders.addProducts(product, {
-        through: { quantity: product.cartItem.quantity || 1 },
-      });
-      // console.log(newOrder);
-    });
-    // console.log(orders.id);
-    const orderId = orders.id;
+    if (products.length === 0) {
+      throw new Error("no products found in cart");
+    }
+    let order = await req.user.createOrder();
+    var newOrder = await order.addProducts(
+      products.map((product) => {
+        product.orderItem = { quantity: product.cartItem.quantity || 1 };
+        return product;
+      })
+    );
+    // const newOrderId = newOrder.id;
     await cart.setProducts(null);
-    res.json({ orderId, msg: true });
+    res.json({ newOrder, msg: true });
   } catch (err) {
     console.log(err);
     res.json({ msg: false });
