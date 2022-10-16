@@ -1,11 +1,40 @@
 const Product = require("../models/product");
 const cartItems = require("../models/cart-item");
-// const { where } = require("sequelize");
+
+const itemsPerPage = 1;
 
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.findAll();
-    res.json({ products, msg: true });
+    let page = parseInt(req.query.page);
+    let hasPrevious = true;
+    let hasNext = true;
+    if (!page || page == 1) {
+      page = 1;
+      hasPrevious = false;
+    }
+    let count = await Product.findAndCountAll({
+      offset: (page - 1) * itemsPerPage,
+      limit: itemsPerPage,
+    });
+    const products = count.rows;
+    const totalProducts = count.count;
+
+    if (totalProducts === 0 || products.length == 0) {
+      throw new Error("no products");
+    }
+    if (parseInt(totalProducts / itemsPerPage) == page) {
+      hasNext = false;
+    }
+
+    res.json({
+      products,
+      page,
+      itemsPerPage,
+      totalProducts,
+      hasNext,
+      hasPrevious,
+      msg: true,
+    });
   } catch (err) {
     console.log(err);
     res.json({ msg: false });
@@ -41,9 +70,14 @@ exports.addToCart = async (req, res) => {
 };
 
 exports.getCart = async (req, res) => {
-  const cart = await req.user.getCart();
-  const products = await cart.getProducts();
-  res.json(products);
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts();
+    res.json(products);
+  } catch (err) {
+    console.log(err);
+    res.json({ msg: "no cart" });
+  }
 };
 
 exports.postProduct = async (req, res) => {

@@ -2,17 +2,35 @@ var removeCartItem = document.getElementsByClassName("btn-danger");
 var cartInputChange = document.getElementsByClassName("cart-quantity-input");
 var shopItems = document.getElementsByClassName("shop-item-button");
 var purchaseBtn = document.getElementsByClassName("btn-purchase")[0];
+var paginationSection = document.getElementById("pagination");
+var paginationContainer = document.getElementsByClassName(
+  "pagination-container"
+)[0];
 //get all Products
-var getAllProducts = async () => {
-  const result = await axios.get("http://localhost:3000/admin/products");
+var getAllProducts = async (e) => {
+  if (!e) {
+    pageNo = 1;
+  } else {
+    pageNo = e.target.id || 1;
+  }
+  const result = await axios.get(
+    `http://localhost:3000/admin/products?page=${pageNo}`
+  );
   if (result.data.msg !== true) {
     console.log("smtg went wrong");
     return;
   }
+  const hasPrevious = result.data.hasPrevious;
+  const hasNext = result.data.hasNext;
+  const itemsPerPage = result.data.itemsPerPage;
+  const page = parseInt(result.data.page);
+  // console.log(page, hasNext, hasPrevious, itemsPerPage);
   var products = result.data.products;
+  document.getElementsByClassName("shop-items")[0].innerHTML = "";
   products.forEach((product) => {
     // console.log(product);
     var shopItems = document.getElementsByClassName("shop-items")[0];
+    // shopItems.innerHTML = "";
     var newShopItem = `<div class="shop-item" id="${product.id}">
           <span class="shop-item-title">${product.name}</span>
           <img class="shop-item-image" src="${product.imageSrc}" />
@@ -25,6 +43,25 @@ var getAllProducts = async () => {
         </div>`;
     shopItems.innerHTML = shopItems.innerHTML + newShopItem;
   });
+  // console.log(paginationContainer);
+  paginationContainer.innerHTML = `<button id="${page - 1}" class="page">${
+    page - 1
+  }</button>
+        <button id="${page}" class="page page-active">${page}</button>
+        <button id="${page + 1}" class="page">${page + 1}</button>`;
+  const pageBtn = document.getElementsByClassName("page");
+  // console.log(pageBtn);
+  if (!hasPrevious) {
+    paginationContainer.removeChild(paginationContainer.firstElementChild);
+  }
+  if (!hasNext) {
+    paginationContainer.removeChild(paginationContainer.lastElementChild);
+  }
+  // console.log(pageBtn.length);
+  for (let i = 0; i < pageBtn.length; i++) {
+    var pagenobtn = pageBtn[i];
+    pagenobtn.addEventListener("click", getAllProducts);
+  }
   for (let i = 0; i < shopItems.length; i++) {
     var items = shopItems[i];
     // console.log(items);
@@ -33,10 +70,9 @@ var getAllProducts = async () => {
 };
 
 window.addEventListener("DOMContentLoaded", async () => {
-  getAllProducts();
+  getAllProducts(false);
   getCart();
   purchaseBtn.addEventListener("click", purchaseCart);
-
   for (let i = 0; i < removeCartItem.length; i++) {
     var btn = removeCartItem[i];
     btn.addEventListener("click", removeCart);
