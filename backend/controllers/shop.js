@@ -1,5 +1,6 @@
 const Product = require("../models/product");
 const cartItems = require("../models/cart-item");
+const Order = require("../models/order");
 
 const itemsPerPage = 4;
 
@@ -146,4 +147,10 @@ exports.removeCart = async (req, res) => {
     console.log(err);
     res.json({ msg: false });
   }
+};
+
+exports.getOrders = async (req, res) => {
+  // -- Select productId From ecommerce.orderitems where orderId IN (Select id From ecommerce.orders where userId = (Select id From ecommerce.users Where email="roshin@gmail.com"))
+  let orderedProducts = await req.user.getOrders({ include: ["products"] });
+  res.json({ orderedProducts });
 };

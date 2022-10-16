@@ -1,0 +1,2 @@
+-- Select * From ecommerce.orders where userId = (Select id From ecommerce.users Where email="roshin@gmail.com")
+-- Select productId From ecommerce.orderitems where orderId IN (Select id From ecommerce.orders where userId = (Select id From ecommerce.users Where email="roshin@gmail.com"))

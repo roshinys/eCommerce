@@ -12,6 +12,7 @@ router.put("/cart-update/:productId", shopControllers.cartUpdate);
 router.delete("/remove-cart/:productId", shopControllers.removeSingleCart);
 
 //router.get ordersPage
+router.get("/order", shopControllers.getOrders);
 router.post("/add-order", shopControllers.removeCart);
 
 module.exports = router;

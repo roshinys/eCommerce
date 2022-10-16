@@ -58,7 +58,7 @@ Cart.belongsTo(User);
 Product.belongsToMany(Cart, { through: CartItem });
 Cart.belongsToMany(Product, { through: CartItem });
 // user has one to many relationship with order
-User.hasOne(Order);
+User.hasMany(Order);
 Order.belongsTo(User);
 //order and product will have many to many relationships
 Product.belongsToMany(Order, { through: OrderItem });

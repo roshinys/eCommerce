@@ -207,6 +207,9 @@ body {
 .shop-item {
   margin: 30px;
 }
+.order-item {
+  margin: 30px;
+}
 
 .shop-item-title {
   display: block;
@@ -235,6 +238,11 @@ body {
 }
 
 .shop-items {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+.order-items {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
@@ -424,4 +432,7 @@ body {
 }
 #pagination {
   margin-bottom: 1rem;
+}
+#total {
+  text-align: center;
 }
