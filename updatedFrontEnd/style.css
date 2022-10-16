@@ -384,7 +384,7 @@ body {
   right: 0px;
   box-shadow: 3px 3px 4px rgba(0, 0, 0, 1);
   height: 100vh;
-  /* overflow-y: scroll; */
+  overflow-y: scroll;
   transform: translateX(100%);
   background-color: #d8d9cf;
   border-radius: 10px;

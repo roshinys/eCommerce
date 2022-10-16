@@ -18,9 +18,11 @@ const Product = require("./models/product");
 const User = require("./models/user");
 const Cart = require("./models/cart");
 const CartItem = require("./models/cart-item");
+const Order = require("./models/order");
+const OrderItem = require("./models/order-item");
 
-app.set("view engine", "ejs");
-app.set("views", "views");
+// app.set("view engine", "ejs");
+// app.set("views", "views");
 
 //setting user dummy which can be done in authcontrollers in future
 app.use(async (req, res, next) => {
@@ -40,7 +42,7 @@ const shopRoutes = require("./routes/shop");
 app.use(bodyParser.json({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/admin/products", shopRoutes);
+app.use("/admin/", shopRoutes);
 
 //user has one to many with product
 Product.belongsTo(User, {
@@ -55,8 +57,12 @@ Cart.belongsTo(User);
 //product and cart have many to many relationships so created a new model CartItem
 Product.belongsToMany(Cart, { through: CartItem });
 Cart.belongsToMany(Product, { through: CartItem });
-console.log("cart is here");
-console.log(Cart);
+// user has one to many relationship with order
+User.hasOne(Order);
+Order.belongsTo(User);
+//order and product will have many to many relationships
+Product.belongsToMany(Order, { through: OrderItem });
+Order.belongsToMany(Product, { through: OrderItem });
 
 sequalize
   // .sync({ force: true })
@@ -80,15 +86,24 @@ sequalize
     try {
       let cart = await user.getCart();
       if (cart) {
-        return cart;
+        return user;
       }
-      return await user.createCart();
+      await user.createCart();
+      return user;
     } catch (err) {
       console.log(err);
     }
   })
-  .then((cart) => {
+  .then(async (user) => {
     // console.log(cart);
+    let order = await user.getOrder();
+    if (order) {
+      return order;
+    }
+    return await user.createOrder();
+  })
+  .then((order) => {
+    // console.log(order);
     app.listen(process.env.PORT);
   })
   .catch((err) => {

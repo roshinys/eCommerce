@@ -1,7 +1,7 @@
 const Product = require("../models/product");
 const cartItems = require("../models/cart-item");
 
-const itemsPerPage = 1;
+const itemsPerPage = 4;
 
 exports.getProducts = async (req, res) => {
   try {
@@ -22,7 +22,8 @@ exports.getProducts = async (req, res) => {
     if (totalProducts === 0 || products.length == 0) {
       throw new Error("no products");
     }
-    if (parseInt(totalProducts / itemsPerPage) == page) {
+    // console.log(parseInt(totalProducts / itemsPerPage) == page);
+    if (parseInt(totalProducts / itemsPerPage) !== page) {
       hasNext = false;
     }
 
@@ -125,8 +126,22 @@ exports.removeSingleCart = async (req, res) => {
   res.json(products);
 };
 exports.removeCart = async (req, res) => {
-  let cart = await req.user.getCart();
-  let products = await cart.getProducts();
-  const result = await cart.removeProducts(products);
-  res.json(result);
+  try {
+    let cart = await req.user.getCart();
+    let products = await cart.getProducts();
+    let orders = await req.user.getOrder();
+    products.forEach(async (product) => {
+      const newOrder = await orders.addProducts(product, {
+        through: { quantity: product.cartItem.quantity || 1 },
+      });
+      // console.log(newOrder);
+    });
+    // console.log(orders.id);
+    const orderId = orders.id;
+    await cart.setProducts(null);
+    res.json({ orderId, msg: true });
+  } catch (err) {
+    console.log(err);
+    res.json({ msg: false });
+  }
 };

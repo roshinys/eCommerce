@@ -83,15 +83,14 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 });
 async function purchaseCart(e) {
-  const result = await axios.delete(
-    "http://localhost:3000/admin/products/remove-cart"
-  );
+  const result = await axios.post("http://localhost:3000/admin/add-order");
   // console.log(result);
-  if (result.data == 0) {
+  if (result.data == 0 || !result.data.msg) {
     sendMessage("No cart Present! Add to cart please");
     return;
   }
   sendMessage("Thank You For Purchasing the product");
+  console.log(result.data);
   var cartItems = document.getElementsByClassName("cart-items")[0];
   while (cartItems.hasChildNodes()) {
     cartItems.removeChild(cartItems.firstChild);
@@ -100,7 +99,7 @@ async function purchaseCart(e) {
 }
 
 async function getCart() {
-  const result = await axios.get("http://localhost:3000/admin/products/cart");
+  const result = await axios.get("http://localhost:3000/admin/cart");
   const products = result.data;
   // var title, price, imageSrc, quantity;
   products.forEach((product) => {
@@ -147,7 +146,7 @@ async function addToCart(e) {
   }
   var newCart = e.target;
   const result = await axios.post(
-    `http://localhost:3000/admin/products/add-cart/${productId}`
+    `http://localhost:3000/admin/add-cart/${productId}`
   );
   if (result.data.msg) {
     console.log("smtg went wrong");
@@ -213,7 +212,7 @@ async function qtyUpdate(e) {
   var qtyValue = e.target.value;
   var prodId = e.target.id;
   await axios.put(
-    `http://localhost:3000/admin/products/cartUpdate/${prodId}?quantity=${qtyValue}`
+    `http://localhost:3000/admin/cart-update/${prodId}?quantity=${qtyValue}`
   );
   updateTotal();
 }
@@ -221,7 +220,7 @@ async function qtyUpdate(e) {
 async function removeCart(e) {
   const prodId = e.target.id;
   const res = await axios.delete(
-    `http://localhost:3000/admin/products/remove-cart/${prodId}`
+    `http://localhost:3000/admin/remove-cart/${prodId}`
   );
   // console.log(res);
   var buttonClicked = e.target;
