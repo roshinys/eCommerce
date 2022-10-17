@@ -44,6 +44,10 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/admin/", shopRoutes);
 
+app.use((req, res, next) => {
+  res.json("no page found");
+});
+
 //user has one to many with product
 Product.belongsTo(User, {
   foreignKey: "userId",

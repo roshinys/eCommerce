@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AddProduct</title>
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      input,
+      label,
+      button {
+        margin: 2px;
+        padding: 3px;
+      }
+      input,
+      button {
+        width: max-content;
+      }
+      button {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Add Product</h1>
+    <form>
+      <label for="name">Title</label>
+      <input type="text" name="name" id="name" />
+      <label for="imageSrc">imageSrc</label>
+      <input type="imageSrc" name="imageSrc" id="imageSrc" />
+      <label for="price">price</label>
+      <input type="number" name="price" id="price" />
+      <button type="button">addProduct</button>
+    </form>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+  <script>
+    document
+      .getElementsByTagName("button")[0]
+      .addEventListener("click", async () => {
+        var name = document.getElementById("name").value;
+        var imageSrc = document.getElementById("imageSrc").value;
+        var price = document.getElementById("price").value;
+        //   console.log(name, imageSrc, price);
+        if (!name || !imageSrc || !price) {
+          console.log("need input");
+          return;
+        }
+        const result = await axios.post(
+          "http://localhost:3000/admin/products",
+          {
+            name: name,
+            imageSrc: imageSrc,
+            price: price,
+          }
+        );
+        console.log(result);
+        if (result.data.status !== 200) {
+          console.log("smtg went wrong");
+          return;
+        }
+      });
+  </script>
+</html>

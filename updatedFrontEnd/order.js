@@ -3,7 +3,12 @@ var total = 0;
 async function getOrders() {
   const result = await axios.get("http://localhost:3000/admin/order");
   //   console.log(result.data);
+  if (!result.data.msg) {
+    console.log("unable to get ordered items");
+    return;
+  }
   const orders = result.data.orderedProducts;
+  // console.log(orders);
   orders.forEach((order) => {
     const orderId = order.id;
     const products = order.products;

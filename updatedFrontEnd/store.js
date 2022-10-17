@@ -7,6 +7,7 @@ var paginationContainer = document.getElementsByClassName(
   "pagination-container"
 )[0];
 //get all Products
+
 var getAllProducts = async (e) => {
   if (!e) {
     pageNo = 1;
@@ -51,6 +52,7 @@ var getAllProducts = async (e) => {
         <button id="${page + 1}" class="page">${page + 1}</button>`;
   const pageBtn = document.getElementsByClassName("page");
   // console.log(pageBtn);
+  // console.log(result.data);
   if (!hasPrevious) {
     paginationContainer.removeChild(paginationContainer.firstElementChild);
   }
@@ -70,7 +72,9 @@ var getAllProducts = async (e) => {
 };
 
 window.addEventListener("DOMContentLoaded", async () => {
-  getAllProducts(false);
+  if (document.getElementById("product")) {
+    getAllProducts(false);
+  }
   getCart();
   purchaseBtn.addEventListener("click", purchaseCart);
   for (let i = 0; i < removeCartItem.length; i++) {
@@ -106,6 +110,7 @@ async function getCart() {
   const result = await axios.get("http://localhost:3000/admin/cart");
   const products = result.data;
   // var title, price, imageSrc, quantity;
+  console.log(products);
   products.forEach((product) => {
     newCartadded(
       product.id,
@@ -215,9 +220,14 @@ async function qtyUpdate(e) {
   }
   var qtyValue = e.target.value;
   var prodId = e.target.id;
-  await axios.put(
+  const result = await axios.put(
     `http://localhost:3000/admin/cart-update/${prodId}?quantity=${qtyValue}`
   );
+  // console.log(result);
+  if (!result.data.msg) {
+    console.log("smtg gone wwrong again");
+    return;
+  }
   updateTotal();
 }
 
@@ -227,6 +237,10 @@ async function removeCart(e) {
     `http://localhost:3000/admin/remove-cart/${prodId}`
   );
   // console.log(res);
+  if (!res.data.msg) {
+    sendMessage("unable to removed item from cart");
+    return;
+  }
   var buttonClicked = e.target;
   var removeItem = buttonClicked.parentNode.parentNode;
   var items = removeItem.parentNode;

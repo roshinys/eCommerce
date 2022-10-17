@@ -1,17 +1,16 @@
 const Product = require("../models/product");
-const cartItems = require("../models/cart-item");
-const Order = require("../models/order");
+// const cartItems = require("../models/cart-item");
+// const Order = require("../models/order");
 
-const itemsPerPage = 4;
+const itemsPerPage = 1;
 
 exports.getProducts = async (req, res) => {
   try {
     let page = parseInt(req.query.page);
     let hasPrevious = true;
     let hasNext = true;
-    if (!page || page == 1) {
+    if (!page) {
       page = 1;
-      hasPrevious = false;
     }
     let count = await Product.findAndCountAll({
       offset: (page - 1) * itemsPerPage,
@@ -24,8 +23,11 @@ exports.getProducts = async (req, res) => {
       throw new Error("no products");
     }
     // console.log(parseInt(totalProducts / itemsPerPage) == page);
-    if (parseInt(totalProducts / itemsPerPage) !== page) {
+    if (parseInt(totalProducts / itemsPerPage) === page) {
       hasNext = false;
+    }
+    if (page === 1) {
+      hasPrevious = false;
     }
 
     res.json({
@@ -46,6 +48,9 @@ exports.getProducts = async (req, res) => {
 exports.addToCart = async (req, res) => {
   try {
     const prodId = req.params.productId;
+    if (!prodId) {
+      throw new Error("no id sent");
+    }
     let cart = await req.user.getCart();
     let products = await cart.getProducts({ where: { id: prodId } });
     let product;
@@ -75,6 +80,9 @@ exports.getCart = async (req, res) => {
   try {
     const cart = await req.user.getCart();
     const products = await cart.getProducts();
+    if (products.length === 0) {
+      throw new Error("no products found");
+    }
     res.json(products);
   } catch (err) {
     console.log(err);
@@ -101,30 +109,58 @@ exports.postProduct = async (req, res) => {
 };
 
 exports.cartUpdate = async (req, res) => {
-  const newQty = parseInt(req.query.quantity);
-  const prodId = req.params.productId;
-  const cart = await req.user.getCart();
-  const products = await cart.getProducts({ where: { id: prodId } });
-  // // await cart.setProducts(products[0], { through: { quantity: newQty } });
-  await cartItems.update(
-    {
-      quantity: newQty,
-    },
-    {
-      where: {
-        productId: products[0].id,
-        cartId: cart.id,
-      },
+  try {
+    const newQty = parseInt(req.query.quantity);
+    const prodId = req.params.productId;
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts({ where: { id: prodId } });
+    const product = products[0];
+    const hasUpdated = await product.setCarts(cart, {
+      through: { quantity: newQty },
+    });
+    if (hasUpdated.length === 0) {
+      throw new Error("couldnt update quantity");
     }
-  );
-  res.json(newQty);
+    res.json({ product, newQty, msg: true });
+    // product.cartItem.quantity = newQty;
+    // const pp = await product.save();
+    // console.log(pp);
+
+    // await product.cartItem.quantity = newQt
+    // await product.save()
+    // if (products.length === 0) {
+    //   throw new Error("no product with that id");
+    // }
+    // await cartItems.update(
+    //   {
+    //     quantity: newQty,
+    //   },
+    //   {
+    //     where: {
+    //       productId: products[0].id,
+    //       cartId: cart.id,
+    //     },
+    //   }
+    // );
+  } catch (err) {
+    console.log(err);
+    res.json({ msg: false });
+  }
 };
 exports.removeSingleCart = async (req, res) => {
-  const prodId = req.params.productId;
-  const cart = await req.user.getCart();
-  const products = await cart.getProducts({ where: { id: prodId } });
-  await cart.removeProducts(products[0]);
-  res.json(products);
+  try {
+    const prodId = req.params.productId;
+    if (!prodId) {
+      throw new Error("no id given");
+    }
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts({ where: { id: prodId } });
+    const removedProduct = await cart.removeProducts(products[0]);
+    res.json({ removedProduct, msg: true });
+  } catch (err) {
+    console.log(err);
+    res.json({ msg: false });
+  }
 };
 exports.removeCart = async (req, res) => {
   try {
@@ -134,6 +170,7 @@ exports.removeCart = async (req, res) => {
       throw new Error("no products found in cart");
     }
     let order = await req.user.createOrder();
+    // console.log(order);
     var newOrder = await order.addProducts(
       products.map((product) => {
         product.orderItem = { quantity: product.cartItem.quantity || 1 };
@@ -151,6 +188,11 @@ exports.removeCart = async (req, res) => {
 
 exports.getOrders = async (req, res) => {
   // -- Select productId From ecommerce.orderitems where orderId IN (Select id From ecommerce.orders where userId = (Select id From ecommerce.users Where email="roshin@gmail.com"))
-  let orderedProducts = await req.user.getOrders({ include: ["products"] });
-  res.json({ orderedProducts });
+  try {
+    let orderedProducts = await req.user.getOrders({ include: ["products"] });
+    res.json({ orderedProducts, msg: true });
+  } catch (err) {
+    console.log(err);
+    res.json({ msg: false });
+  }
 };
